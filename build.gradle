@@ -1,13 +1,13 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.0'
-    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.0'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'java'
     id 'idea'
 }
 
 group = 'org.owari'
 version = '1.0.0'
-
 archivesBaseName = 'akari-command-enhance'
 
 repositories {
@@ -19,14 +19,16 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.0'
-    implementation 'org.bstats:bstats-bukkit:3.0.0'
+    api 'org.jetbrains.kotlin:kotlin-stdlib:1.9.0'
+    api 'org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.5.1'
+    api 'org.jetbrains.kotlinx:kotlinx-serialization-hocon:1.5.1'
+    api 'com.typesafe:config:1.4.2'
 
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.1'
-    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+    testApi 'org.junit.jupiter:junit-jupiter-api:5.9.3'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
 }
 
@@ -54,15 +56,19 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-
 shadowJar {
+    archiveClassifier.set('full')
+    zip64 true
+
     dependencies {
         include dependency('org.jetbrains.kotlin:kotlin-stdlib:1.9.0')
-        include dependency('org.bstats:bstats-bukkit:3.0.0')
-        include dependency('org.bstats:bstats-base:3.0.0')
+        include dependency('org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.5.1')
+        include dependency('org.jetbrains.kotlinx:kotlinx-serialization-hocon:1.5.1')
+        include dependency('com.typesafe:config:1.4.2')
     }
-    relocate 'kotlin', 'org.owari.akari.enhance.kotlin'
-    relocate 'kotlinx', 'org.owari.akari.enhance.kotlinx'
-    relocate 'org.bstats', 'org.owari.akari.enhance.bstats'
+    enableRelocation true
+    relocationPrefix 'org.owari.akari.enhance.lib'
     minimize()
 }
+
+build.dependsOn(shadowJar)
