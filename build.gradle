@@ -1,0 +1,68 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.9.0'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'java'
+    id 'idea'
+}
+
+group = 'org.owari'
+version = '1.0.0'
+
+archivesBaseName = 'akari-command-enhance'
+
+repositories {
+    mavenLocal()
+    maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
+    maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.0'
+    implementation 'org.bstats:bstats-bukkit:3.0.0'
+
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+    compileOnly 'me.clip:placeholderapi:2.11.1'
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+}
+
+test {
+    useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+compileJava {
+    options.encoding "UTF-8"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+
+shadowJar {
+    dependencies {
+        include dependency('org.jetbrains.kotlin:kotlin-stdlib:1.9.0')
+        include dependency('org.bstats:bstats-bukkit:3.0.0')
+        include dependency('org.bstats:bstats-base:3.0.0')
+    }
+    relocate 'kotlin', 'org.owari.akari.enhance.kotlin'
+    relocate 'kotlinx', 'org.owari.akari.enhance.kotlinx'
+    relocate 'org.bstats', 'org.owari.akari.enhance.bstats'
+    minimize()
+}

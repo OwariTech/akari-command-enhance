@@ -1,0 +1,6 @@
+name: AkariCommandEnhance
+main: org.owari.akari.enhance.Main
+version: 1.0.0
+author: Mochizuki Haruka
+description: the most powerful minecraft command enhance plugin
+softdepend: [PlaceholderAPI, Vault]
