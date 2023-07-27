@@ -5,3 +5,7 @@ api-version: 1.12
 author: Mochizuki Haruka
 description: the most powerful minecraft command enhance plugin
 depend: [PlaceholderAPI]
+commands:
+  akari_test:
+    description: test command
+    usage: /akari_test

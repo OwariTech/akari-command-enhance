@@ -2,10 +2,19 @@ package org.owari.akari.enhance
 
 import org.bukkit.Bukkit
 import org.bukkit.event.*
+import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.event.server.ServerCommandEvent
 
 class CommandListener : Listener {
+    fun isBlackListCommand(label: String): Boolean {
+        return label in conf.blacklist
+    }
+
+    fun isPluginCommand(label: String): Boolean {
+        return Bukkit.getPluginCommand(label) != null
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     fun on(e: ServerCommandEvent) {
         val cmd = e.command
@@ -16,18 +25,14 @@ class CommandListener : Listener {
             val i = s.indexOf(' ')
             if (i == -1) s else s.substring(0, i)
         }
-        if (Enhancer.isBlackListCommand(label)) return
-        if (!Enhancer.isPluginCommand(label)) return
+        if (isBlackListCommand(label)) return
+        if (!isPluginCommand(label)) return
 
         val enhanced = Enhancer.enhance(cmd, e.sender)
-        enhanced ?: return
-        when (enhanced.size) {
-            0 -> e.isCancelled = true
-            1 -> e.command = if(slashed) "/${enhanced[0]}" else enhanced[0]
-            else -> {
-                e.isCancelled = true
-                for (c in enhanced) Bukkit.dispatchCommand(e.sender, c)
-            }
+        when(enhanced.first) {
+            1 -> e.isCancelled = true
+            2 -> e.command = enhanced.second
+            else -> return
         }
     }
 
@@ -41,18 +46,28 @@ class CommandListener : Listener {
             val i = s.indexOf(' ')
             if (i == -1) s else s.substring(0, i)
         }
-        if (!Enhancer.isPluginCommand(label)) return
+        if (isBlackListCommand(label)) return
+        if (!isPluginCommand(label)) return
 
         val enhanced = Enhancer.enhance(msg, e.player)
-        enhanced ?: return
-        when (enhanced.size) {
-            0 -> e.isCancelled = true
-            1 -> e.message = if(slashed) "/${enhanced[0]}" else enhanced[0]
-            else -> {
-                e.isCancelled = true
-                for (c in enhanced) Bukkit.dispatchCommand(e.player, c)
-            }
+        when(enhanced.first) {
+            1 -> e.isCancelled = true
+            2 -> e.message = enhanced.second
+            else -> return
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    fun on(e: AsyncPlayerChatEvent) {
+        if(!conf.enableChat) return
+        val msg = e.message
+        val enhanced = Enhancer.enhance(msg, e.player)
+        when(enhanced.first) {
+            1 -> e.isCancelled = true
+            2 -> e.message = enhanced.second
+            else -> return
+        }
+
     }
 }
 
