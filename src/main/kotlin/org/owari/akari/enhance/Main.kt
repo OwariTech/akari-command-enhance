@@ -41,7 +41,7 @@ class Main : JavaPlugin() {
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        sender.sendMessage(args.joinToString())
+        sender.sendMessage("/$label ${args.joinToString(" ")}")
         return true
     }
 }

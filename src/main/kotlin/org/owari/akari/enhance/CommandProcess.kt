@@ -13,7 +13,7 @@ object Enhancer {
 
     val selectors: List<String> = listOf("@p", "@r", "@s")
     val varAccess = "\$[a-zA-Z0-9_]+".toRegex()
-    val exprEval = "\\\$\\{.*}".toRegex()
+    val exprEval = "\\\$\\{.*?}".toRegex()
 
     val noImpact = 0 to ""
     val refuse = 1 to ""
@@ -24,7 +24,7 @@ object Enhancer {
      * 返回 (1, *) 取消命令执行
      * 返回 (2, *) 修改命令 message
      */
-    fun enhance(cmd: String, sender: CommandSender): Pair<Int, String> {
+    fun applyVars(cmd: String, sender: CommandSender): Pair<Int, String> {
         var result = cmd
 
         // 直接变量调用
@@ -58,6 +58,12 @@ object Enhancer {
 
         // PAPI 变量调用
         result = PlaceholderAPI.setPlaceholders(sender as? Player, result)
+
+        return edit(result)
+    }
+
+    fun applySelectors(cmd: String, sender: CommandSender): Pair<Int, String>  {
+        var result = cmd
 
         // 选择器
         if ("@r" in result) {
@@ -99,10 +105,8 @@ object Enhancer {
             if (sender is Player) result = result.replace("@s", sender.name)
             else return refuse
         }
-        println(result)
 
-        if(result == cmd) return noImpact
-        else return edit(result)
+        return edit(result)
     }
 }
 

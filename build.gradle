@@ -24,7 +24,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-hocon:1.5.1'
     implementation 'com.typesafe:config:1.4.2'
 
-    implementation 'com.github.KouyouX:Shigure-Expression-Compiler:v1.0.0'
+    implementation 'com.github.KouyouX:Shigure-Expression-Compiler:v1.0.1'
 
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.1'
@@ -67,7 +67,7 @@ shadowJar {
         include dependency('org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.5.1')
         include dependency('org.jetbrains.kotlinx:kotlinx-serialization-hocon:1.5.1')
         include dependency('com.typesafe:config:1.4.2')
-        include dependency('com.github.KouyouX:Shigure-Expression-Compiler:v1.0.0')
+        include dependency('com.github.KouyouX:Shigure-Expression-Compiler:v1.0.1')
     }
     enableRelocation true
     relocationPrefix 'org.owari.akari.enhance.lib'

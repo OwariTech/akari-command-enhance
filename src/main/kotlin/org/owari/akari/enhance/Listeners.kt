@@ -26,12 +26,18 @@ class CommandListener : Listener {
             if (i == -1) s else s.substring(0, i)
         }
         if (isBlackListCommand(label)) return
-        if (!isPluginCommand(label)) return
-
-        val enhanced = Enhancer.enhance(cmd, e.sender)
-        when(enhanced.first) {
+        var applied = Enhancer.applyVars(cmd, e.sender)
+        if(applied.first == 1) {
+            e.isCancelled = true
+            return
+        }
+        // 不对原版命令启用选择器功能
+        if (isPluginCommand(label)) {
+            applied = Enhancer.applySelectors(applied.second, e.sender)
+        }
+        when(applied.first) {
             1 -> e.isCancelled = true
-            2 -> e.command = enhanced.second
+            2 -> e.command = applied.second
             else -> return
         }
     }
@@ -47,12 +53,18 @@ class CommandListener : Listener {
             if (i == -1) s else s.substring(0, i)
         }
         if (isBlackListCommand(label)) return
-        if (!isPluginCommand(label)) return
-
-        val enhanced = Enhancer.enhance(msg, e.player)
-        when(enhanced.first) {
+        var applied = Enhancer.applyVars(msg, e.player)
+        if(applied.first == 1) {
+            e.isCancelled = true
+            return
+        }
+        // 不对原版命令启用选择器功能
+        if (isPluginCommand(label)) {
+            applied = Enhancer.applySelectors(applied.second, e.player)
+        }
+        when(applied.first) {
             1 -> e.isCancelled = true
-            2 -> e.message = enhanced.second
+            2 -> e.message = applied.second
             else -> return
         }
     }
@@ -61,13 +73,18 @@ class CommandListener : Listener {
     fun on(e: AsyncPlayerChatEvent) {
         if(!conf.enableChat) return
         val msg = e.message
-        val enhanced = Enhancer.enhance(msg, e.player)
-        when(enhanced.first) {
+        var applied = Enhancer.applyVars(msg, e.player)
+        if(applied.first == 1) {
+            e.isCancelled = true
+            return
+        }
+        // 不对原版命令启用选择器功能
+        applied = Enhancer.applySelectors(applied.second, e.player)
+        when(applied.first) {
             1 -> e.isCancelled = true
-            2 -> e.message = enhanced.second
+            2 -> e.message = applied.second
             else -> return
         }
-
     }
 }
 
